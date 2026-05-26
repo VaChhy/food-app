@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Food Order Mini App</title>
+
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Google Fonts: Battambang (Khmer) + Sora (Latin) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body>
+
+<!-- ════ LOADING SCREEN ════ -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loader-logo">🍽️</div>
+  <div class="loader-spinner"></div>
+  <p class="loader-text" id="loaderText">Loading...</p>
+</div>
+
+<!-- ════ TOAST NOTIFICATIONS ════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ════ APP WRAPPER ════ -->
+<div class="app-wrapper" id="appWrapper" style="display:none">
+
+  <!-- HEADER -->
+  <header class="app-header" id="appHeader">
+    <div class="header-left">
+      <button class="btn-icon" id="btnBack" style="display:none" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="brand-logo">🍽️</div>
+      <div class="brand-text">
+        <span class="brand-name" id="brandName">Food Order</span>
+        <span class="brand-sub" id="brandSub">Fresh & Delicious</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon lang-toggle" id="langToggle" onclick="toggleLanguage()">
+        <span id="langLabel">ខ្មែរ</span>
+      </button>
+      <button class="btn-icon" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ════ PAGES ════ -->
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="pageHome">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-content">
+        <p class="hero-greeting" id="heroGreeting">Good day! 👋</p>
+        <h1 class="hero-title" id="heroTitle">What would you like to eat?</h1>
+        <p class="hero-sub" id="heroSub">Fresh food delivered to your door</p>
+      </div>
+      <div class="hero-emoji">🥘</div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search food..." oninput="searchMenu()" />
+        <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="section-header">
+      <h2 class="section-title" id="catTitle">Categories</h2>
+    </div>
+    <div class="categories-scroll" id="categoriesScroll"></div>
+
+    <!-- Menu Grid -->
+    <div class="section-header">
+      <h2 class="section-title" id="menuTitle">Menu</h2>
+      <span class="menu-count" id="menuCount"></span>
+    </div>
+    <div class="menu-grid" id="menuGrid">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  </div>
+
+  <!-- CART PAGE -->
+  <div class="page" id="pageCart">
+    <div class="page-title-bar">
+      <h2 class="page-title" id="cartTitle">My Cart</h2>
+      <button class="btn-text-danger" onclick="clearCart()" id="btnClearCart">Clear All</button>
+    </div>
+    <div id="cartContent"></div>
+    <div class="cart-summary glass" id="cartSummary" style="display:none">
+      <div class="summary-row">
+        <span id="subtotalLabel">Subtotal</span>
+        <span id="cartSubtotal">$0.00</span>
+      </div>
+      <div class="summary-row">
+        <span id="deliveryLabel">Delivery</span>
+        <span class="text-success">Free</span>
+      </div>
+      <div class="summary-row total-row">
+        <span id="totalLabel"><strong>Total</strong></span>
+        <span id="cartTotal"><strong>$0.00</strong></span>
+      </div>
+      <button class="btn-primary btn-full" id="btnCheckout" onclick="goToCheckout()">
+        <span id="checkoutBtnText">Proceed to Checkout</span> →
+      </button>
+    </div>
+  </div>
+
+  <!-- CHECKOUT PAGE -->
+  <div class="page" id="pageCheckout">
+    <div class="page-title-bar">
+      <h2 class="page-title" id="checkoutTitle">Checkout</h2>
+    </div>
+    <div class="checkout-form">
+      <div class="form-section">
+        <h3 class="form-section-title" id="deliveryInfoTitle">📍 Delivery Information</h3>
+        <div class="form-group">
+          <label id="labelName">Your Name</label>
+          <input type="text" id="inputName" class="form-input" placeholder="Enter your name" />
+        </div>
+        <div class="form-group">
+          <label id="labelPhone">Phone Number</label>
+          <input type="tel" id="inputPhone" class="form-input" placeholder="+855 XX XXX XXXX" />
+        </div>
+        <div class="form-group">
+          <label id="labelAddress">Delivery Address</label>
+          <textarea id="inputAddress" class="form-input form-textarea" placeholder="Enter your full address..."></textarea>
+        </div>
+        <div class="form-group">
+          <label id="labelNote">Note (optional)</label>
+          <input type="text" id="inputNote" class="form-input" placeholder="Any special instructions?" />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title" id="orderSummaryTitle">🛒 Order Summary</h3>
+        <div id="checkoutItems"></div>
+        <div class="summary-row total-row mt-2">
+          <span><strong id="checkoutTotalLabel">Total</strong></span>
+          <span id="checkoutTotal"><strong>$0.00</strong></span>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-full" id="btnPlaceOrder" onclick="placeOrder()">
+        <span id="placeOrderText">🍽️ Place Order</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ORDERS PAGE -->
+  <div class="page" id="pageOrders">
+    <div class="page-title-bar">
+      <h2 class="page-title" id="ordersTitle">My Orders</h2>
+      <button class="btn-icon" onclick="loadOrders()">🔄</button>
+    </div>
+    <div id="ordersContent"></div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-page="pageHome" onclick="switchPage('pageHome', this)">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label" id="navHome">Home</span>
+    </button>
+    <button class="nav-item" data-page="pageCart" onclick="switchPage('pageCart', this)">
+      <span class="nav-icon">🛒</span>
+      <span class="nav-label" id="navCart">Cart</span>
+      <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+    </button>
+    <button class="nav-item" data-page="pageOrders" onclick="switchPage('pageOrders', this); loadOrders()">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label" id="navOrders">Orders</span>
+    </button>
+  </nav>
+
+</div><!-- end app-wrapper -->
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

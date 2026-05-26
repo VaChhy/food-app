@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Food Order</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/admin.css" />
+</head>
+<body>
+
+<!-- ════ SIDEBAR ════ -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon">🍽️</span>
+    <div>
+      <div class="logo-title">Food Order</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-link active" onclick="showSection('dashboard', this)">📊 Dashboard</button>
+    <button class="nav-link" onclick="showSection('orders', this)">📋 Orders</button>
+    <button class="nav-link" onclick="showSection('menu', this)">🍛 Menu</button>
+    <button class="nav-link" onclick="showSection('customers', this)">👥 Customers</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- ════ MAIN CONTENT ════ -->
+<div class="main-content">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <button class="btn-icon-sm" onclick="toggleTheme()">🌙</button>
+      <span class="admin-badge">Admin</span>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD SECTION ── -->
+  <div class="section active" id="sectionDashboard">
+    <h2 class="section-heading">📊 Dashboard</h2>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card skeleton-card" style="height:100px"></div>
+      <div class="stat-card skeleton-card" style="height:100px"></div>
+      <div class="stat-card skeleton-card" style="height:100px"></div>
+      <div class="stat-card skeleton-card" style="height:100px"></div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <h3>Recent Orders</h3>
+        <button class="btn-sm" onclick="showSection('orders', document.querySelector('[onclick*=orders]'))">View All</button>
+      </div>
+      <div id="recentOrders"></div>
+    </div>
+  </div>
+
+  <!-- ── ORDERS SECTION ── -->
+  <div class="section" id="sectionOrders">
+    <div class="section-header-row">
+      <h2 class="section-heading">📋 Orders</h2>
+      <div class="filter-row">
+        <select class="form-select" id="orderFilter" onchange="filterOrders()">
+          <option value="">All Orders</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="accepted">✅ Accepted</option>
+          <option value="rejected">❌ Rejected</option>
+        </select>
+        <input type="text" class="form-input-sm" id="orderSearch" placeholder="Search orders..." oninput="filterOrders()" />
+        <button class="btn-sm" onclick="loadOrders()">🔄 Refresh</button>
+      </div>
+    </div>
+    <div id="ordersTable"></div>
+  </div>
+
+  <!-- ── MENU SECTION ── -->
+  <div class="section" id="sectionMenu">
+    <div class="section-header-row">
+      <h2 class="section-heading">🍛 Menu Management</h2>
+      <button class="btn-primary" onclick="openAddMenuModal()">+ Add Item</button>
+    </div>
+    <div id="menuTable"></div>
+  </div>
+
+  <!-- ── CUSTOMERS SECTION ── -->
+  <div class="section" id="sectionCustomers">
+    <h2 class="section-heading">👥 Customers</h2>
+    <div id="customersTable"></div>
+  </div>
+
+</div><!-- end main-content -->
+
+<!-- ════ MODALS ════ -->
+
+<!-- Add/Edit Menu Modal -->
+<div class="modal-overlay" id="menuModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add Menu Item</h3>
+      <button class="modal-close" onclick="closeMenuModal()">✕</button>
+    </div>
+    <form id="menuForm" enctype="multipart/form-data" onsubmit="return false">
+      <input type="hidden" id="menuItemId" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name (English) *</label>
+          <input type="text" id="fNameEn" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label>Name (Khmer)</label>
+          <input type="text" id="fNameKm" class="form-input" placeholder="ឈ្មោះអាហារ" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Description (English)</label>
+          <textarea id="fDescEn" class="form-input" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Description (Khmer)</label>
+          <textarea id="fDescKm" class="form-input" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price ($) *</label>
+          <input type="number" id="fPrice" class="form-input" step="0.01" min="0" required />
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="fCategory" class="form-input">
+            <option value="main">🍛 Main</option>
+            <option value="noodle">🍜 Noodle</option>
+            <option value="dessert">🍮 Dessert</option>
+            <option value="drink">🥤 Drink</option>
+            <option value="appetizer">🥗 Appetizer</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Food Image</label>
+        <input type="file" id="fImage" class="form-input" accept="image/*" onchange="previewImage()" />
+        <img id="imgPreview" src="" alt="" style="display:none;max-height:120px;border-radius:8px;margin-top:8px;object-fit:cover;" />
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="fAvailable" checked />
+          <span>Available for ordering</span>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeMenuModal()">Cancel</button>
+        <button class="btn-primary" id="saveMenuBtn" onclick="saveMenuItem()">💾 Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Reject Order Modal -->
+<div class="modal-overlay" id="rejectModal" onclick="closeModal(event)">
+  <div class="modal-box modal-sm">
+    <div class="modal-header">
+      <h3>❌ Reject Order</h3>
+      <button class="modal-close" onclick="document.getElementById('rejectModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>Reason for rejection</label>
+      <select id="rejectReason" class="form-input">
+        <option value="Out of stock">Out of stock</option>
+        <option value="Too late to order">Too late to order</option>
+        <option value="Out of delivery range">Out of delivery range</option>
+        <option value="Sorry, we cannot process this order.">Other reason</option>
+      </select>
+    </div>
+    <input type="hidden" id="rejectOrderId" />
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="document.getElementById('rejectModal').classList.remove('active')">Cancel</button>
+      <button class="btn-danger" onclick="confirmReject()">❌ Reject Order</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/admin.js"></script>
+</body>
+</html>

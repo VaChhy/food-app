@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "name_en": "Beef Lok Lak",
+    "name_km": "លុកឡាក់គោ",
+    "description_en": "Classic Cambodian stir-fried beef with fresh vegetables and special sauce",
+    "description_km": "សាច់គោចៀនជាមួយបន្លែស្រស់និងទឹកជ្រលក់ពិសេស",
+    "price": 8.50,
+    "category": "main",
+    "image": "/static/images/placeholder-food.jpg",
+    "available": true
+  },
+  {
+    "id": "2",
+    "name_en": "Amok Fish",
+    "name_km": "អាម៉ុកត្រី",
+    "description_en": "Traditional Khmer fish curry steamed in banana leaf",
+    "description_km": "ស្ករម្ទស់ប្រពៃណីខ្មែរចំហុយក្នុងស្លឹកចេក",
+    "price": 9.00,
+    "category": "main",
+    "image": "/static/images/placeholder-food.jpg",
+    "available": true
+  },
+  {
+    "id": "3",
+    "name_en": "Mango Sticky Rice",
+    "name_km": "បាយដំណើបស្វាយ",
+    "description_en": "Sweet sticky rice with fresh mango and coconut cream",
+    "description_km": "បាយដំណើបជាមួយស្វាយស្រស់និងក្រែមដូង",
+    "price": 4.50,
+    "category": "dessert",
+    "image": "/static/images/placeholder-food.jpg",
+    "available": true
+  },
+  {
+    "id": "4",
+    "name_en": "Num Banh Chok",
+    "name_km": "នំបញ្ចុក",
+    "description_en": "Khmer noodles with green fish curry and fresh herbs",
+    "description_km": "នំបញ្ចុកជាមួយស្ករម្ទស់ត្រីស្បើយ",
+    "price": 3.50,
+    "category": "noodle",
+    "image": "/static/images/placeholder-food.jpg",
+    "available": true
+  },
+  {
+    "id": "5",
+    "name_en": "Iced Coffee",
+    "name_km": "កាហ្វេទឹកកក",
+    "description_en": "Strong Cambodian iced coffee with condensed milk",
+    "description_km": "កាហ្វេខ្លាំងទឹកកកជាមួយទឹកដោះគោខាប",
+    "price": 2.00,
+    "category": "drink",
+    "image": "/static/images/placeholder-food.jpg",
+    "available": true
+  },
+  {
+    "id": "6",
+    "name_en": "Spring Rolls",
+    "name_km": "នំច្រត់",
+    "description_en": "Crispy fried spring rolls with vegetables and pork",
+    "description_km": "នំច្រត់ចៀនក្រឹបជាមួយបន្លែនិងសាច់ជ្រូក",
+    "price": 5.00,
+    "category": "appetizer",
+    "image": "/static/images/placeholder-food.jpg",
+    "available": true
+  }
+]

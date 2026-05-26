@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — Food Order</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/admin.css" />
+</head>
+<body class="login-body">
+
+<div class="login-card glass">
+  <div class="login-logo">🍽️</div>
+  <h1 class="login-title">Admin Panel</h1>
+  <p class="login-sub">Telegram Food Order</p>
+
+  <div id="loginError" class="login-error" style="display:none"></div>
+
+  <div class="form-group">
+    <label>Username</label>
+    <input type="text" id="username" class="form-input" placeholder="admin" autofocus />
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" id="password" class="form-input" placeholder="••••••••"
+      onkeypress="if(event.key==='Enter') login()" />
+  </div>
+  <button class="btn-primary btn-full" id="loginBtn" onclick="login()">
+    🔐 Login
+  </button>
+  <p class="login-hint">Default: admin / admin123</p>
+</div>
+
+<script>
+async function login() {
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if (!username || !password) {
+    errEl.textContent = 'Please enter username and password';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Logging in...';
+
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      window.location.href = '/admin';
+    } else {
+      errEl.textContent = json.message || 'Invalid credentials';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = 'Connection error';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔐 Login';
+  }
+}
+</script>
+</body>
+</html>
